@@ -12,6 +12,9 @@ fugashi = "^1.2.1"
 ipadic = "^1.0.0"
 pykakasi = "^2.2.1"
 simstring-pure = "^1.0.0"
+pandas = "^1.5.2"
+openpyxl = "^3.0.10"
+mecab-python3 = "^1.0.6"
 
 [tool.poetry.dev-dependencies]
 

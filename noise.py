@@ -65,31 +65,31 @@ def noise(text, searcher):
     noise text.
     return noised text and label.
     """
-    if len(text) <= 2:
-        return pd.Series(["", ""])
-    text_split = tokenizer.tokenize(text)
-    idx = random.randint(0, len(text_split)-1)
-    target = text_split[idx].replace("#", "")
-    target_yomi = kanji_to_hiragana(target)
-    result = searcher.search(target_yomi, 0.8)
-    noised = random.choice(result)
-    if noised == "" or noised.isnumeric():
-        return pd.Series(["", ""])
-    noised_kanji = hiragana_to_kanji(noised)
-    noised_kanji_token = tokenizer.tokenize(noised_kanji)
-    if noised_kanji_token[0] == "[UNK]":
-        return pd.Series(["", ""])
-    len_noised = len(noised_kanji_token) # 変換後の単語がtokenizerで複数tokenに分割された場合に備える
-    text_split[idx] = noised_kanji
-    noised_sentence = "".join(text_split).replace("#", "")
-    noised_sentence_split = tokenizer.tokenize(noised_sentence)
-    label = [0] * len(noised_sentence_split)
     try:
+        if len(text) <= 2:
+            return pd.Series(["", ""])
+        text_split = tokenizer.tokenize(text)
+        idx = random.randint(0, len(text_split)-1)
+        target = text_split[idx].replace("#", "")
+        target_yomi = kanji_to_hiragana(target)
+        result = searcher.search(target_yomi, 0.8)
+        noised = random.choice(result)
+        if noised == "" or noised.isnumeric():
+            return pd.Series(["", ""])
+        noised_kanji = hiragana_to_kanji(noised)
+        noised_kanji_token = tokenizer.tokenize(noised_kanji)
+        if noised_kanji_token[0] == "[UNK]":
+            return pd.Series(["", ""])
+        len_noised = len(noised_kanji_token) # 変換後の単語がtokenizerで複数tokenに分割された場合に備える
+        text_split[idx] = noised_kanji
+        noised_sentence = "".join(text_split).replace("#", "")
+        noised_sentence_split = tokenizer.tokenize(noised_sentence)
+        label = [0] * len(noised_sentence_split)
         for i in range(len_noised):
             label[idx] = 1
             idx += 1
-    except:
-        # 変換によりトークン数が減ってしまった場合など
+    except Exception as e:
+        print(f"Error: {e}")
         return pd.Series(["", ""])
     return pd.Series([noised_sentence, label])
 
@@ -147,7 +147,7 @@ def main():
         df[["noised_content", "label_simple"]] = df["content"].progress_apply(noise, args=(searcher,))
         df[["noised_content_concat", "label_concat"]] = df.apply(concat_pre_post_text, args=(df,), axis=1)
         df = df[df["noised_content"]!=""]
-        df[["noised_content_concat", "label_concat"]].to_csv("noised.tsv", sep="\t", index=False, header=False, mode="a")
+        df[["noised_content_concat", "label_concat"]].to_csv("noised_conversations.tsv", sep="\t", index=False, header=False, mode="a")
         
 
 if __name__ == "__main__":

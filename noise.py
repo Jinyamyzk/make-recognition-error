@@ -80,7 +80,7 @@ def noise(text, searcher):
         noised_kanji_token = tokenizer.tokenize(noised_kanji)
         if noised_kanji_token[0] == "[UNK]":
             return pd.Series(["", ""])
-        len_noised = len(noised_kanji_token) # 変換後の単語がtokenizerで複数tokenに分割された場合に備える
+        len_noised = len(noised_kanji_token) # In case the number of token icreases or decreases.
         text_split[idx] = noised_kanji
         noised_sentence = "".join(text_split).replace("#", "")
         noised_sentence_split = tokenizer.tokenize(noised_sentence)
@@ -109,14 +109,14 @@ def concat_pre_post_text(row, df):
             return  pd.Series([text, label])
         pre_idx = idx - 5 if idx >= 5 else 0
         post_idx = idx + 5 if len(df) > idx + 5 else len(df)
-        pre_text = "".join(df.iloc[pre_idx:idx, 2].to_list()) # second column is "content"
+        pre_text = "".join(df.iloc[pre_idx:idx, 2].to_list()) # The second column is "content".
         post_text = "".join(df.iloc[idx:post_idx, 2].to_list())
         pre_text_split = tokenizer.tokenize(pre_text)
         post_text_split = tokenizer.tokenize(post_text)
         total_len = len(pre_text_split) + len(post_text_split) + len(text_split)
         if total_len > 254:
             surplus = total_len - 254 
-            pre_text_split = pre_text_split[surplus//2+1:] # delete one more if surplus is as an odd
+            pre_text_split = pre_text_split[surplus//2+1:] # Delete one more if surplus is as an odd
             post_text_split = post_text_split[:-surplus//+1]
             pre_text = "".join(pre_text_split).replace("#", "")
             post_text = "".join(post_text_split).replace("#", "")

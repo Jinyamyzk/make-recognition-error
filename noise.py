@@ -137,7 +137,7 @@ def main():
     searcher = Searcher(db, CosineMeasure())
 
     # files = glob.glob(f"sample_data/**/**/*.xlsx")
-    files = glob.glob(f"btsjcorpus_ver_march_2022_1-29_1/**/**/*.xlsx")
+    files = glob.glob(f"btsjcorpus_ver_march_2022_1-29_2/**/**/*.xlsx")
     for file in tqdm(files, desc="[Loading excel]"):
         df = pd.read_excel(file,index_col=None,names=["raw_content"],skiprows=[0,1],usecols=[7])
         df["content"] = df["raw_content"].apply(remove_symbol)
@@ -147,7 +147,7 @@ def main():
         df[["noised_content", "label_simple"]] = df["content"].progress_apply(noise, args=(searcher,))
         df[["noised_content_concat", "label_concat"]] = df.apply(concat_pre_post_text, args=(df,), axis=1)
         df = df[df["noised_content"]!=""]
-        df[["noised_content_concat", "label_concat"]].to_csv("noised_conversations.tsv", sep="\t", index=False, header=False, mode="a")
+        df[["noised_content_concat", "label_concat"]].to_csv("noised_conversations_2.tsv", sep="\t", index=False, header=False, mode="a")
         
 
 if __name__ == "__main__":

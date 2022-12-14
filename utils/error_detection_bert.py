@@ -23,7 +23,7 @@ class ErrorDetectionBert(nn.Module):
         output = self.bert(input_ids)[0]
         output = self.linear1(output)
         output = self.linear2(output)
-        output = torch.sigmoid(output)
+        output = torch.sigmoid(output).squeeze(-1)
         return output
 
 if __name__ == "__main__":       
@@ -32,9 +32,11 @@ if __name__ == "__main__":
     model = ErrorDetectionBert()
     tokenizer = BertJapaneseTokenizer.from_pretrained("cl-tohoku/bert-base-japanese")
     text = "まずはベースの日本語BERTモデルを用意します。"
-    ids = torch.tensor(tokenizer.encode(text, truncation=True, padding="max_length" ,max_length=512)).unsqueeze(dim=0)
+    ids = torch.tensor(tokenizer.encode(text, truncation=True, padding="max_length" ,max_length=512))
+    ids = ids.unsqueeze(dim=0) # バッチ次元を追加
     print(ids.size())
     model.eval()
     output = model(ids)
-    print(output)
+    print(output.size())
+    # print(output)
 

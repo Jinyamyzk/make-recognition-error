@@ -6,6 +6,7 @@ def main():
     df_2 = pd.read_csv("data/noised/noised_conversations_2.tsv", sep="\t", names=("text", "label"))
     df = pd.concat([df_1, df_2])
     df = df[~df["label"].isna()]
+
     print(df.info())
 
     df_train, df_valid_test = train_test_split(df, test_size=0.2, shuffle=True, random_state=123)

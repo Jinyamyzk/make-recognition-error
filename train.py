@@ -84,11 +84,11 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
                         loss.backward()
                         optimizer.step()
 
-                        if (iteration % 10 != 0):  # 10iterに1度、lossを表示
+                        if (iteration % 10 == 0):  # 10iterに1度、lossを表示
                             acc = (torch.sum(preds == labels.data)
                                    ).double()/512/batch_size
-                            print('{} || イテレーション {} || Loss: {:.4f} || 10iter. || 本イテレーションの正解率：{}'.format(
-                                phase, iteration, loss.item(),  acc))
+                            print('イテレーション {} || Loss: {:.4f} || 10iter. || 本イテレーションの正解率：{}'.format(
+                                iteration, loss.item(),  acc))
 
                     iteration += 1
 
@@ -119,7 +119,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
             "valid_acc": valid_acc_list
         }
         pickle.dump(loss_acc_dict, f)
-        
+
     return net
 
 
@@ -178,10 +178,13 @@ def main():
         param.requires_grad = True
 
     # 最適化手法の設定
-    optimizer = optim.Adam([{'params': net.linear1.parameters(), 'lr': 1e-4}])
-    optimizer = optim.Adam([{'params': net.linear2.parameters(), 'lr': 1e-4}])
+    optimizer = optim.Adam([
+        {'params': net.linear1.parameters(), 'lr': 1e-4},
+        {'params': net.linear2.parameters(), 'lr': 1e-4}
+        ])
+
     # 損失関数の設定
-    criterion = nn.MSELoss()
+    criterion = nn.BCELoss()
 
     # 学習・検証を実行する
     num_epochs = 5

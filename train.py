@@ -5,6 +5,7 @@ from torch import nn
 from utils.error_detection_bert import ErrorDetectionBert
 from transformers import BertJapaneseTokenizer
 
+import pickle
 
 tokenizer = BertJapaneseTokenizer.from_pretrained("cl-tohoku/bert-base-japanese")
 MAX_LENGTH = 512
@@ -94,21 +95,31 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
                     # 損失と正解数の合計を更新
                     epoch_loss += loss.item() * batch_size
                     epoch_corrects += torch.sum(preds == labels.data) / 512
-                    if phase == "train":
-                        train_loss_list.append(epoch_loss)
-                        train_acc_list.append(epoch_acc)
-                    else:
-                        valid_loss_list.append(epoch_loss)
-                        valid_acc_list.append(epoch_acc)
 
             # epochごとのlossと正解率
             epoch_loss = epoch_loss / len(dataloaders_dict[phase].dataset)
             epoch_acc = epoch_corrects.double(
             ) / len(dataloaders_dict[phase].dataset)
 
+            if phase == "train":
+                train_loss_list.append(epoch_loss)
+                train_acc_list.append(epoch_acc)
+            else:
+                valid_loss_list.append(epoch_loss)
+                valid_acc_list.append(epoch_acc)
+
             print('Epoch {}/{} | {:^5} |  Loss: {:.4f} Acc: {:.4f}'.format(epoch+1, num_epochs,
                                                                            phase, epoch_loss, epoch_acc))
-
+    
+    with open("loss_acc.pickle", "wb") as f:
+        loss_acc_dict = {
+            "train_loss": train_loss_list,
+            "train_acc": train_acc_list,
+            "valid_loss": valid_loss_list,
+            "valid_acc": valid_acc_list
+        }
+        pickle.dump(loss_acc_dict, f)
+        
     return net
 
 

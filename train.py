@@ -4,6 +4,7 @@ import torch.optim as optim
 from torch import nn
 from utils.error_detection_bert import ErrorDetectionBert
 from transformers import BertJapaneseTokenizer
+from utils.customized_bce import CustomizedBCELoss
 
 import pickle
 
@@ -184,7 +185,8 @@ def main():
         ])
 
     # 損失関数の設定
-    criterion = nn.BCELoss(reduction="sum")
+    # criterion = nn.BCELoss(reduction="sum")
+    criterion = CustomizedBCELoss()
 
     # 学習・検証を実行する
     num_epochs = 1

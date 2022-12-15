@@ -184,10 +184,10 @@ def main():
         ])
 
     # 損失関数の設定
-    criterion = nn.BCELoss()
+    criterion = nn.BCELoss(reduction="sum")
 
     # 学習・検証を実行する
-    num_epochs = 5
+    num_epochs = 1
     net_trained = train_model(net, dataloaders_dict,
                             criterion, optimizer, num_epochs=num_epochs)
 

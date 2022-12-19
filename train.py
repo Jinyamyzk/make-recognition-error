@@ -79,7 +79,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
                     # BERTに入力
                     outputs = net(input_ids=inputs, attention_mask=attn_mask)
 
-                    loss = criterion(outputs, labels, attn_mask)  # 損失を計算
+                    loss = criterion(outputs, labels, attn_mask, device)  # 損失を計算
 
                     preds = torch.where(outputs < 0.5, 0, 1)  # ラベルを予測
 

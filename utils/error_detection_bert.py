@@ -17,10 +17,10 @@ class ErrorDetectionBert(nn.Module):
         nn.init.normal_(self.linear2.weight, std=0.02)
         nn.init.normal_(self.linear2.bias, 0)
     
-    def forward(self, input_ids):
+    def forward(self, input_ids, attention_mask=None):
         # attention maskの作成, idが0(pad token)なら0
         attn_mask = torch.where(input_ids > 0, 1, 0)
-        output = self.bert(input_ids)[0]
+        output = self.bert(input_ids=input_ids, attention_mask=attention_mask)[0]
         output = self.linear1(output)
         output = self.linear2(output)
         output = torch.sigmoid(output).squeeze(-1)

@@ -62,8 +62,11 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
             for batch in (dataloaders_dict[phase]):
                 # batchはTextとLableの辞書型変数
 
+                
+
                 # GPUが使えるならGPUにデータを送る
                 inputs = batch.Text[0].to(device)  # 文章
+                attn_mask = torch.where(input==0, 0, 1).to(device) # attention maskの作成
                 labels = batch.Label.to(dtype=torch.float32, device=device)  # ラベル
 
 

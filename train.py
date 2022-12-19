@@ -77,9 +77,9 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
                 with torch.set_grad_enabled(phase == 'train'):
 
                     # BERTに入力
-                    outputs = net(inputs)
+                    outputs = net(inputs_ids=inputs, attention_mask=attn_mask)
 
-                    loss = criterion(outputs, labels)  # 損失を計算
+                    loss = criterion(outputs, labels, attn_mask)  # 損失を計算
 
                     preds = torch.where(outputs < 0.5, 0, 1)  # ラベルを予測
 
@@ -192,7 +192,7 @@ def main():
     criterion = CustomizedBCELoss()
 
     # 学習・検証を実行する
-    num_epochs = 5
+    num_epochs = 1
     net_trained = train_model(net, dataloaders_dict,
                             criterion, optimizer, num_epochs=num_epochs)
 

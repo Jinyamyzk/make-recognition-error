@@ -66,7 +66,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
 
                 # GPUが使えるならGPUにデータを送る
                 inputs = batch.Text[0].to(device)  # 文章
-                attn_mask = torch.where(input==0, 0, 1).to(device) # attention maskの作成
+                attn_mask = torch.where(inputs==0, 0, 1).to(device) # attention maskの作成
                 labels = batch.Label.to(dtype=torch.float32, device=device)  # ラベル
 
 
@@ -77,7 +77,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
                 with torch.set_grad_enabled(phase == 'train'):
 
                     # BERTに入力
-                    outputs = net(inputs_ids=inputs, attention_mask=attn_mask)
+                    outputs = net(input_ids=inputs, attention_mask=attn_mask)
 
                     loss = criterion(outputs, labels, attn_mask)  # 損失を計算
 

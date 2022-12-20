@@ -176,6 +176,9 @@ def main():
     # 1. まず全てを、勾配計算Falseにしてしまう
     for param in net.parameters():
         param.requires_grad = False
+    # 2. BertLayerモジュールの最後を勾配計算ありに変更
+    for param in net.bert.encoder.layer[-1].parameters():
+        param.requires_grad = True
     # 2. 識別器を勾配計算ありに変更
     for param in net.linear1.parameters():
         param.requires_grad = True

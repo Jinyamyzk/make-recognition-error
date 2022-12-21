@@ -135,7 +135,7 @@ def main():
                                 fix_length=MAX_LENGTH, pad_first=True, pad_token=0)                       
 
     dataset_train, dataset_valid, dataset_test = data.TabularDataset.splits(
-        path="data", train="train.tsv", validation="valid.tsv",test="test.tsv", format="tsv", fields=[
+        path="livedoor_data", train="train.tsv", validation="valid.tsv",test="test.tsv", format="tsv", fields=[
             ("Text", TEXT), ("Label", LABEL)])
     
     # datasetの長さを確認してみる

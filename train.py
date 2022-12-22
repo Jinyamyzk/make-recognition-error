@@ -187,11 +187,11 @@ def main():
 
     # 損失関数の設定
     # criterion = nn.BCELoss(reduction="sum")
-    # criterion = CustomizedBCELoss()
-    criterion = FairBCELoss()
+    criterion = CustomizedBCELoss()
+    # criterion = FairBCELoss()
 
     # 学習・検証を実行する
-    num_epochs = 10
+    num_epochs = 15
     net_trained = train_model(net, dataloaders_dict,
                             criterion, optimizer, num_epochs=num_epochs)
 

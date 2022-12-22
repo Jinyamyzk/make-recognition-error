@@ -95,7 +95,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
                         if (iteration % 10 == 0):  # 10iterに1度、lossを表示
                             acc = (torch.sum(preds == labels.data)
                                    ).double()/torch.sum(labels.data)
-                            print(f"正階数:{torch.sum(preds == labels.data)}, ラベルの数: {torch.sum(labels.data)}")
+                            print(f"正解数:{torch.sum(preds == labels.data)}, ラベルの数: {torch.sum(labels.data)}")
                             print('イテレーション {} || Loss: {:.4f} || 10iter. || 本イテレーションの正解率：{}'.format(
                                 iteration, loss.item(),  acc))
 

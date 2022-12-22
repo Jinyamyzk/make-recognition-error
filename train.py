@@ -140,17 +140,6 @@ def main():
     dataset_train, dataset_valid, dataset_test = data.TabularDataset.splits(
         path="livedoor_data", train="train.tsv", validation="valid.tsv",test="test.tsv", format="tsv", fields=[
             ("Text", TEXT), ("Label", LABEL)])
-    
-    # datasetの長さを確認してみる
-    print(dataset_train.__len__())
-    print(dataset_valid.__len__())
-    print(dataset_test.__len__())
-    # datasetの中身を確認してみる
-    item = next(iter(dataset_train))
-    print(item.Text)
-    print("長さ：", len(item.Text))  # 長さを確認 [CLS]から始まり[SEP]で終わる。512より長いと後ろが切れる
-    print("ラベルの長さ：", len(item.Label))  
-    print("ラベル：", item.Label)
 
     # DataLoaderを作成します（torchtextの文脈では単純にiteraterと呼ばれています）
     batch_size = 16  # BERTでは16、32あたりを使用する
@@ -166,10 +155,6 @@ def main():
 
     # 辞書オブジェクトにまとめる
     dataloaders_dict = {"train": dl_train, "val": dl_valid}
-    batch = next(iter(dl_test))
-    print(batch)
-    print(batch.Text)
-    print(batch.Label)
 
     net = ErrorDetectionBert()
     # 訓練モードに設定

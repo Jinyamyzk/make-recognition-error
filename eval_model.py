@@ -41,21 +41,21 @@ def main(model_path):
         dataset_test, batch_size=batch_size, train=False, sort=False)
     
     # ------------------testcode------------------------
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    batch = next(iter(dl_test))
-    inputs = batch.Text[0].to(device)  # 文章
-    attn_mask = torch.where(inputs==0, 0, 1).to(device) # attention maskの作成
-    labels = batch.Label.to(device)  # ラベル
-    print(f"誤認識の数: {torch.sum(labels.data)}")
-    net_trained = ErrorDetectionBert()
-    state_dict = torch.load(model_path)
-    net_trained.load_state_dict(state_dict)
-    net_trained.eval() 
-    outputs = net_trained(input_ids=inputs, attention_mask=attn_mask)
-    print(outputs)
-    preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
-    print(preds)
-    return
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # batch = next(iter(dl_test))
+    # inputs = batch.Text[0].to(device)  # 文章
+    # attn_mask = torch.where(inputs==0, 0, 1).to(device) # attention maskの作成
+    # labels = batch.Label.to(device)  # ラベル
+    # print(f"誤認識の数: {torch.sum(labels.data)}")
+    # net_trained = ErrorDetectionBert()
+    # state_dict = torch.load(model_path)
+    # net_trained.load_state_dict(state_dict)
+    # net_trained.eval() 
+    # outputs = net_trained(input_ids=inputs, attention_mask=attn_mask)
+    # print(outputs)
+    # preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
+    # print(preds)
+    # return
     # ------------------testcode------------------------
 
 
@@ -86,8 +86,10 @@ def main(model_path):
             # BertForLivedoorに入力
             # BERTに入力
             outputs = net_trained(input_ids=inputs, attention_mask=attn_mask)
-            preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
+            preds = torch.where(outputs < 0.5, 0, 1)  # ラベルを予測
+            preds = torch.where(attn_mask==1, preds, 0)
             print(f"誤認識と予測した数:\t{torch.sum(preds)}")
+            preds = torch.where(outputs < 0.5, -1, 1) 
             # 損失と正解数の合計を更新
             epoch_corrects += torch.sum(preds == labels.data)
             epoch_label_len += torch.sum(labels.data)

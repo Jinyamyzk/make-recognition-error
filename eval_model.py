@@ -94,6 +94,7 @@ def main(model_path):
             preds = torch.where(outputs < 0.5, -1, 1) 
             # 損失と正解数の合計を更新
             epoch_corrects += torch.sum(preds == labels.data)
+            print(f"正解数: {epoch_corrects}")
             epoch_label_len += torch.sum(labels.data)
     # 正解率
     epoch_acc = epoch_corrects.double() / epoch_label_len.double()

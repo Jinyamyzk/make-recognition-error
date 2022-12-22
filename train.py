@@ -83,7 +83,9 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
 
                     loss = criterion(outputs, labels, attn_mask, device)  # 損失を計算
 
-                    preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
+                    preds = torch.where(outputs < 0.5, 0, 1)  # ラベルを予測
+                    preds = torch.where(attn_mask==1, preds, 0) # padの部分は0に
+                    preds = torch.where(preds < 0.5, -1, 1) # ラベルが1についてのみ正解率を計算する
 
                     # 訓練時はバックプロパゲーション
                     if phase == 'train':
@@ -180,7 +182,8 @@ def main():
         {'params': net.bert.encoder.layer[-1].parameters(), 'lr': 5e-5},
         {'params': net.linear1.parameters(), 'lr': 1e-4},
         {'params': net.linear2.parameters(), 'lr': 1e-4},
-        {'params': net.linear3.parameters(), 'lr': 1e-4}
+        {'params': net.linear3.parameters(), 'lr': 1e-4},
+        {'params': net.linear4.parameters(), 'lr': 1e-4}
         ])
 
     # 損失関数の設定

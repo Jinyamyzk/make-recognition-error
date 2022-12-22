@@ -9,8 +9,9 @@ class ErrorDetectionBert(nn.Module):
         model_name = "cl-tohoku/bert-base-japanese"
         self.bert = BertModel.from_pretrained("cl-tohoku/bert-base-japanese")
         self.linear1 = nn.Linear(in_features=768, out_features=1024)
-        self.linear2 = nn.Linear(in_features=1024, out_features=512)
-        self.linear3 = nn.Linear(in_features=512, out_features=1)
+        self.linear2 = nn.Linear(in_features=1024, out_features=1024)
+        self.linear3 = nn.Linear(in_features=1024, out_features=512)
+        self.linear4 = nn.Linear(in_features=512, out_features=1)
 
         # 重み初期化処理
         nn.init.normal_(self.linear1.weight, std=0.02)
@@ -19,6 +20,8 @@ class ErrorDetectionBert(nn.Module):
         nn.init.normal_(self.linear2.bias, 0)
         nn.init.normal_(self.linear3.weight, std=0.02)
         nn.init.normal_(self.linear3.bias, 0)
+        nn.init.normal_(self.linear4.weight, std=0.02)
+        nn.init.normal_(self.linear4.bias, 0)
     
     def forward(self, input_ids, attention_mask=None):
         # attention maskの作成, idが0(pad token)なら0
@@ -27,6 +30,7 @@ class ErrorDetectionBert(nn.Module):
         output = self.linear1(output)
         output = self.linear2(output)
         output = self.linear3(output)
+        output = self.linear4(output)
         output = torch.sigmoid(output).squeeze(-1)
         return output
 

@@ -184,11 +184,15 @@ def main():
         param.requires_grad = True
     for param in net.linear2.parameters():
         param.requires_grad = True
+    for param in net.linear3.parameters():
+        param.requires_grad = True
 
     # 最適化手法の設定
     optimizer = optim.Adam([
+        {'params': net.bert.encoder.layer[-1].parameters(), 'lr': 5e-5},
         {'params': net.linear1.parameters(), 'lr': 1e-4},
-        {'params': net.linear2.parameters(), 'lr': 1e-4}
+        {'params': net.linear2.parameters(), 'lr': 1e-4},
+        {'params': net.linear3.parameters(), 'lr': 1e-4}
         ])
 
     # 損失関数の設定

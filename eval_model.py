@@ -68,6 +68,7 @@ def main(model_path):
             # BERTに入力
             outputs = net_trained(input_ids=inputs, attention_mask=attn_mask)
             preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
+            print(f"誤認識と予測した数:\t{torch.sum(preds)}")
             # 損失と正解数の合計を更新
             epoch_corrects += torch.sum(preds == labels.data)
             epoch_label_len += torch.sum(labels.data)

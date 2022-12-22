@@ -191,7 +191,7 @@ def main():
     criterion = FairBCELoss()
 
     # 学習・検証を実行する
-    num_epochs = 5
+    num_epochs = 10
     net_trained = train_model(net, dataloaders_dict,
                             criterion, optimizer, num_epochs=num_epochs)
 

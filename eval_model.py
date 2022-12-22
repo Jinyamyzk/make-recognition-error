@@ -2,7 +2,6 @@ import torch
 from torchtext.legacy import data
 from utils.error_detection_bert import ErrorDetectionBert
 from transformers import BertJapaneseTokenizer
-from utils.fair_bce import FairBCELoss
 from tqdm import tqdm
 import argparse
 
@@ -43,14 +42,13 @@ def main(model_path):
 
     # テストデータでの正解率を求める
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print("使用デバイス：", device)
 
     net_trained = ErrorDetectionBert()
     state_dict = torch.load(model_path)
     net_trained.load_state_dict(state_dict)
     net_trained.eval()   # モデルを検証モードに
     net_trained.to(device)  # GPUが使えるならGPUへ送る
-
-    criterion = FairBCELoss()
 
     # epochの正解数を記録する変数
     epoch_corrects = 0
@@ -69,9 +67,6 @@ def main(model_path):
             # BertForLivedoorに入力
             # BERTに入力
             outputs = net_trained(input_ids=inputs, attention_mask=attn_mask)
-
-            loss = criterion(outputs, labels, attn_mask, device)  # 損失を計算
-
             preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
             # 損失と正解数の合計を更新
             epoch_corrects += torch.sum(preds == labels.data)

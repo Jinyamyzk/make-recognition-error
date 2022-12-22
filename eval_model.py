@@ -39,6 +39,25 @@ def main(model_path):
 
     dl_test = data.Iterator(
         dataset_test, batch_size=batch_size, train=False, sort=False)
+    
+    # ------------------testcode------------------------
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    batch = next(iter(dl_test))
+    inputs = batch.Text[0].to(device)  # 文章
+    attn_mask = torch.where(inputs==0, 0, 1).to(device) # attention maskの作成
+    labels = batch.Label.to(device)  # ラベル
+    print(f"誤認識の数: {torch.sum(labels.data)}")
+    net_trained = ErrorDetectionBert()
+    state_dict = torch.load(model_path)
+    net_trained.load_state_dict(state_dict)
+    net_trained.eval() 
+    outputs = net_trained(input_ids=inputs, attention_mask=attn_mask)
+    print(outputs)
+    preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
+    print(preds)
+    return
+    # ------------------testcode------------------------
+
 
     # テストデータでの正解率を求める
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

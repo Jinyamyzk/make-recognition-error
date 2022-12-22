@@ -183,7 +183,6 @@ def main():
         {'params': net.linear1.parameters(), 'lr': 1e-4},
         {'params': net.linear2.parameters(), 'lr': 1e-4},
         {'params': net.linear3.parameters(), 'lr': 1e-4},
-        {'params': net.linear4.parameters(), 'lr': 1e-4}
         ])
 
     # 損失関数の設定

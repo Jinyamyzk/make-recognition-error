@@ -57,6 +57,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
 
             epoch_loss = 0.0  # epochの損失和
             epoch_corrects = 0  # epochの正解数
+            epoch_label_len = 0 # epochのラベルが1の数
             iteration = 1
 
             # データローダーからミニバッチを取り出すループ
@@ -82,7 +83,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
 
                     loss = criterion(outputs, labels, attn_mask, device)  # 損失を計算
 
-                    preds = torch.where(outputs < 0.5, 0, 1)  # ラベルを予測
+                    preds = torch.where(outputs < 0.5, -1, 1)  # ラベルを予測
 
                     # 訓練時はバックプロパゲーション
                     if phase == 'train':
@@ -91,7 +92,7 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
 
                         if (iteration % 10 == 0):  # 10iterに1度、lossを表示
                             acc = (torch.sum(preds == labels.data)
-                                   ).double()/512/batch_size
+                                   ).double()/torch.sum(labels.data)
                             print('イテレーション {} || Loss: {:.4f} || 10iter. || 本イテレーションの正解率：{}'.format(
                                 iteration, loss.item(),  acc))
 
@@ -99,12 +100,13 @@ def train_model(net, dataloaders_dict, criterion, optimizer, num_epochs):
 
                     # 損失と正解数の合計を更新
                     epoch_loss += loss.item() * batch_size
-                    epoch_corrects += torch.sum(preds == labels.data) / 512
+                    epoch_corrects += torch.sum(preds == labels.data)
+                    epoch_label_len += torch.sum(labels.data)
 
             # epochごとのlossと正解率
             epoch_loss = epoch_loss / len(dataloaders_dict[phase].dataset)
             epoch_acc = epoch_corrects.double(
-            ) / len(dataloaders_dict[phase].dataset)
+            ) / epoch_label_len.double()
 
             if phase == "train":
                 train_loss_list.append(epoch_loss)

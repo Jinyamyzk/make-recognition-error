@@ -91,7 +91,7 @@ def main(model_path):
             preds = torch.where(attn_mask==1, preds, 0)
             print(f"誤認識の数: {torch.sum(labels.data)}")
             print(f"誤認識と予測した数: {torch.sum(preds)}")
-            # preds = torch.where(outputs < 0.5, -1, 1) 
+            preds = torch.where(preds < 0.5, -1, 1) 
             # 損失と正解数の合計を更新
             epoch_corrects += torch.sum(preds == labels.data)
             print(f"正解数: {epoch_corrects}")

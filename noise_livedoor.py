@@ -85,7 +85,7 @@ def noise(text, searcher):
     text_split = tokenizer.tokenize(text)
     text_split = [word for word in text_split if word != "[UNK]"]
     for word in text_split:
-        if len(word) >= 2 and random.uniform(0,1) <= 0.1:
+        if len(word) >= 2 and random.uniform(0,1) <= 0.2:
             noised = simstring_noise(word.replace("#", ""), searcher)
             noised_len = len(tokenizer.tokenize(noised))
             noised_text.append(noised)
@@ -149,7 +149,7 @@ def main():
         df.reset_index(inplace=True, drop=True)
 
         new_df = concat_5_sentences(df)
-        new_df.to_csv("livedoor_noised_data2.tsv", sep="\t", index=False, header=False, mode="a")
+        new_df.to_csv("livedoor_noised_data_3.tsv", sep="\t", index=False, header=False, mode="a")
     
     print(f"Failure Count: {failure_count}")
 
